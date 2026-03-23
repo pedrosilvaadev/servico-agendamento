@@ -11,3 +11,112 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum UserRole {
+  OWNER
+  STAFF
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  DONE
+  CANCELED
+  NO_SHOW
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  phone        String?
+  role         UserRole      @default(OWNER)
+  clients      Client[]
+  services     Service[]
+  appointments Appointment[]
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Client {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  email        String?
+  phone        String?
+  birthDate    DateTime?
+  notes        String?
+  lastVisit    DateTime?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([userId, name])
+}
+
+model Service {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  durationMinute Int
+  price          Decimal       @db.Decimal(10, 2)
+  isActive       Boolean       @default(true)
+  appointments   Appointment[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  userId      String
+  clientId    String
+  serviceId   String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client      Client            @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  service     Service           @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  status      AppointmentStatus @default(SCHEDULED)
+  scheduledAt DateTime
+  notes       String?
+  doneAt      DateTime?
+  transaction Transaction?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([userId, scheduledAt])
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([status])
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  userId        String
+  appointmentId String?         @unique
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointment   Appointment?    @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  type          TransactionType
+  category      String?
+  description   String?
+  amount        Decimal         @db.Decimal(10, 2)
+  occurredAt    DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([userId, occurredAt])
+  @@index([type])
+}
