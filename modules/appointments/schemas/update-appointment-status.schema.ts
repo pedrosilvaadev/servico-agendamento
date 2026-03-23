@@ -1,10 +1,10 @@
-import { AppointmentStatus } from "@/app/generated/prisma/client";
+import { updateAppointmentSchema } from "@/modules/appointments/schemas/appointment.schema";
 import { z } from "zod";
 
 export const updateAppointmentStatusSchema = z.object({
   userId: z.string().cuid(),
   appointmentId: z.string().cuid(),
-  status: z.nativeEnum(AppointmentStatus),
+  status: updateAppointmentSchema.shape.status.unwrap(),
   occurredAt: z.coerce.date().optional(),
 });
 
