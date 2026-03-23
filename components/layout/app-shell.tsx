@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { AppHeader } from "@/components/shared/layout/header";
 import { MobileBottomNav } from "@/components/shared/layout/mobile-bottom-nav";
+import { QuickCreatePanel } from "@/components/shared/layout/quick-create-panel";
 import { Sidebar } from "@/components/shared/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -26,6 +27,8 @@ export function AppShell({ children }: AppShellProps) {
   const toggleSidebarMode = useUIStore((state) => state.toggleSidebarMode);
   const isMobileSidebarOpen = useUIStore((state) => state.isMobileSidebarOpen);
   const setMobileSidebarOpen = useUIStore((state) => state.setMobileSidebarOpen);
+  const activeModal = useUIStore((state) => state.activeModal);
+  const closeModal = useUIStore((state) => state.closeModal);
 
   const isCompact = sidebarMode === "collapsed";
 
@@ -81,6 +84,12 @@ export function AppShell({ children }: AppShellProps) {
           <main className="flex-1 overflow-auto px-3 pt-4 pb-20 md:px-6 md:py-6">{children}</main>
         </div>
       </div>
+
+      <Sheet open={Boolean(activeModal)} onOpenChange={(isOpen) => { if (!isOpen) closeModal(); }}>
+        <SheetContent side="right" className="w-[92vw] max-w-md border-l border-border/70 p-5">
+          <QuickCreatePanel />
+        </SheetContent>
+      </Sheet>
 
       <MobileBottomNav />
     </div>

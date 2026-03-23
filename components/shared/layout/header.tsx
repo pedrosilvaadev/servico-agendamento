@@ -2,12 +2,15 @@ import { Menu } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUIStore } from "@/store";
 
 type AppHeaderProps = {
   onOpenMobileSidebar: () => void;
 };
 
 export function AppHeader({ onOpenMobileSidebar }: AppHeaderProps) {
+  const openModal = useUIStore((state) => state.openModal);
+
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-background/85 px-3 py-3 backdrop-blur md:px-6">
       <div className="flex items-center gap-2">
@@ -32,10 +35,13 @@ export function AppHeader({ onOpenMobileSidebar }: AppHeaderProps) {
         <Badge variant="secondary" className="hidden sm:inline-flex">
           Operacao ativa
         </Badge>
-        <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+        <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={() => openModal("createClient")}>
           Novo cliente
         </Button>
-        <Button size="sm">Novo agendamento</Button>
+        <Button variant="outline" size="sm" className="hidden lg:inline-flex" onClick={() => openModal("createService")}>
+          Novo servico
+        </Button>
+        <Button size="sm" onClick={() => openModal("createAppointment")}>Novo agendamento</Button>
       </div>
     </header>
   );
