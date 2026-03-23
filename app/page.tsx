@@ -1,48 +1,37 @@
-import { ArrowUpRight, CalendarDays, Scissors, Users, Wallet } from "lucide-react";
+import { CalendarDays, Scissors, Users, Wallet } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/shared/empty-state";
+import { Loading } from "@/components/shared/loading";
+import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { AppointmentList } from "@/modules/appointments/components/appointment-list";
+import { ClientCard } from "@/modules/clients/components/client-card";
+import { ClientMetrics } from "@/modules/clients/components/client-metrics";
+import { KpiCard } from "@/modules/dashboard/components/kpi-card";
+import { QuickActions } from "@/modules/dashboard/components/quick-actions";
 
 export default function Home() {
+  const appointments = [
+    { id: "a-1", time: "09:00", clientName: "Marina Alves", serviceName: "Coloracao", status: "Confirmado" },
+    { id: "a-2", time: "10:30", clientName: "Paula Siqueira", serviceName: "Corte feminino", status: "Em espera" },
+    { id: "a-3", time: "14:00", clientName: "Julia Tavares", serviceName: "Limpeza de pele", status: "Confirmado" },
+  ];
+
   return (
     <section className="space-y-5">
+      <PageHeader
+        title="Visao geral"
+        description="Acompanhe os principais indicadores da operacao e execute acoes com rapidez."
+        badgeText="Hoje"
+        actions={<Button variant="outline">Atualizar dados</Button>}
+      />
+
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <p className="text-sm text-muted-foreground">Agendamentos hoje</p>
-            <CalendarDays className="size-4 text-muted-foreground" />
-          </div>
-          <p className="mt-3 text-3xl font-semibold tracking-tight">18</p>
-          <Badge variant="secondary" className="mt-3">+12% vs ontem</Badge>
-        </article>
-
-        <article className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <p className="text-sm text-muted-foreground">Clientes ativos</p>
-            <Users className="size-4 text-muted-foreground" />
-          </div>
-          <p className="mt-3 text-3xl font-semibold tracking-tight">236</p>
-          <Badge variant="secondary" className="mt-3">+9 novos</Badge>
-        </article>
-
-        <article className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <p className="text-sm text-muted-foreground">Receita do dia</p>
-            <Wallet className="size-4 text-muted-foreground" />
-          </div>
-          <p className="mt-3 text-3xl font-semibold tracking-tight">R$ 2.840</p>
-          <Badge variant="secondary" className="mt-3">Ticket medio R$ 157</Badge>
-        </article>
-
-        <article className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <p className="text-sm text-muted-foreground">Servico destaque</p>
-            <Scissors className="size-4 text-muted-foreground" />
-          </div>
-          <p className="mt-3 text-xl font-semibold tracking-tight">Escova + Hidratacao</p>
-          <Badge variant="secondary" className="mt-3">14 atendimentos</Badge>
-        </article>
+        <KpiCard title="Agendamentos hoje" value="18" trend="+12% vs ontem" icon={<CalendarDays className="size-4 text-muted-foreground" />} />
+        <KpiCard title="Clientes ativos" value="236" trend="+9 novos" icon={<Users className="size-4 text-muted-foreground" />} />
+        <KpiCard title="Receita do dia" value="R$ 2.840" trend="Ticket medio R$ 157" icon={<Wallet className="size-4 text-muted-foreground" />} />
+        <KpiCard title="Servico destaque" value="Escova + Hidratacao" trend="14 atendimentos" icon={<Scissors className="size-4 text-muted-foreground" />} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.7fr_1fr]">
@@ -52,51 +41,50 @@ export default function Home() {
             <Button variant="outline" size="sm">Ver agenda completa</Button>
           </div>
           <Separator className="my-4" />
-
-          <div className="space-y-3">
-            {[
-              { time: "09:00", client: "Marina Alves", service: "Coloracao", status: "Confirmado" },
-              { time: "10:30", client: "Paula Siqueira", service: "Corte feminino", status: "Em espera" },
-              { time: "14:00", client: "Julia Tavares", service: "Limpeza de pele", status: "Confirmado" },
-            ].map((item) => (
-              <div
-                key={`${item.time}-${item.client}`}
-                className="flex flex-col gap-2 rounded-lg border border-border/60 bg-background/80 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-md bg-muted px-2 py-1 text-xs font-semibold">{item.time}</div>
-                  <div>
-                    <p className="text-sm font-medium">{item.client}</p>
-                    <p className="text-xs text-muted-foreground">{item.service}</p>
-                  </div>
-                </div>
-                <Badge variant="outline">{item.status}</Badge>
-              </div>
-            ))}
-          </div>
+          <AppointmentList items={appointments} />
         </article>
 
+        <QuickActions
+          actions={[
+            { id: "qa-1", label: "Novo atendimento", variant: "default" },
+            { id: "qa-2", label: "Registrar despesa" },
+            { id: "qa-3", label: "Cadastrar servico" },
+          ]}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_1fr]">
         <article className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm md:px-5">
-          <h2 className="text-base font-semibold">Acoes rapidas</h2>
-          <Separator className="my-4" />
-          <div className="space-y-2">
-            <Button className="w-full justify-between" size="lg">
-              Novo atendimento
-              <ArrowUpRight className="size-4" />
-            </Button>
-            <Button className="w-full justify-between" size="lg" variant="outline">
-              Registrar despesa
-              <ArrowUpRight className="size-4" />
-            </Button>
-            <Button className="w-full justify-between" size="lg" variant="outline">
-              Cadastrar servico
-              <ArrowUpRight className="size-4" />
-            </Button>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            Fluxo otimizado para operacao rapida no desktop e no celular.
+          <h2 className="text-base font-semibold">Feature Clients</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Componentes reais da feature de clientes, com composicao por modulo.
           </p>
+          <Separator className="my-4" />
+          <div className="space-y-3">
+            <ClientCard
+              name="Mariana Prado"
+              email="mariana@exemplo.com"
+              phone="(11) 99999-9999"
+              lastVisitLabel="Ultima visita: hoje"
+            />
+            <ClientCard
+              name="Renata Mota"
+              email="renata@exemplo.com"
+              phone="(11) 98888-8888"
+              lastVisitLabel="Ultima visita: 3 dias"
+            />
+          </div>
         </article>
+
+        <div className="space-y-4">
+          <ClientMetrics activeClients={236} newThisMonth={28} />
+          <EmptyState
+            title="Sem campanhas ativas"
+            description="Crie uma campanha de retorno para clientes inativos e aumente a recorrencia."
+            actionLabel="Criar campanha"
+          />
+          <Loading label="Sincronizando indicadores" />
+        </div>
       </div>
     </section>
   );

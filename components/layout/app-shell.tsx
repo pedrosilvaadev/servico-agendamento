@@ -1,19 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  LayoutDashboard,
-  Menu,
-  Scissors,
-  Users,
-  Wallet,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { AppHeader } from "@/components/shared/layout/header";
+import { Sidebar } from "@/components/shared/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -30,82 +20,11 @@ type AppShellProps = {
   children: React.ReactNode;
 };
 
-type NavigationItem = {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
-
-const navigationItems: NavigationItem[] = [
-  {
-    href: "/",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/agenda",
-    label: "Agenda",
-    icon: CalendarDays,
-  },
-  {
-    href: "/clientes",
-    label: "Clientes",
-    icon: Users,
-  },
-  {
-    href: "/servicos",
-    label: "Servicos",
-    icon: Scissors,
-  },
-  {
-    href: "/financeiro",
-    label: "Financeiro",
-    icon: Wallet,
-  },
-];
-
-function SideNavigation({ compact = false }: { compact?: boolean }) {
-  const pathname = usePathname();
-
-  return (
-    <nav className="space-y-1">
-      {navigationItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = pathname === item.href;
-
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "group flex items-center gap-3 rounded-xl border px-3 py-2 text-sm font-medium transition",
-              compact ? "justify-center px-2" : "justify-start",
-              isActive
-                ? "border-primary/25 bg-primary/10 text-primary"
-                : "border-transparent text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground",
-            )}
-          >
-            <Icon className="size-4" />
-            {!compact && <span>{item.label}</span>}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
 export function AppShell({ children }: AppShellProps) {
-  const {
-    sidebarMode,
-    toggleSidebarMode,
-    isMobileSidebarOpen,
-    setMobileSidebarOpen,
-  } = useUIStore((state) => ({
-    sidebarMode: state.sidebarMode,
-    toggleSidebarMode: state.toggleSidebarMode,
-    isMobileSidebarOpen: state.isMobileSidebarOpen,
-    setMobileSidebarOpen: state.setMobileSidebarOpen,
-  }));
+  const sidebarMode = useUIStore((state) => state.sidebarMode);
+  const toggleSidebarMode = useUIStore((state) => state.toggleSidebarMode);
+  const isMobileSidebarOpen = useUIStore((state) => state.isMobileSidebarOpen);
+  const setMobileSidebarOpen = useUIStore((state) => state.setMobileSidebarOpen);
 
   const isCompact = sidebarMode === "collapsed";
 
@@ -121,7 +40,7 @@ export function AppShell({ children }: AppShellProps) {
           </SheetHeader>
           <Separator />
           <div className="px-4 py-4">
-            <SideNavigation />
+            <Sidebar onNavigate={() => setMobileSidebarOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>
@@ -151,38 +70,12 @@ export function AppShell({ children }: AppShellProps) {
           </div>
           <Separator />
           <div className="flex-1 px-3 py-4">
-            <SideNavigation compact={isCompact} />
+            <Sidebar compact={isCompact} />
           </div>
         </aside>
 
         <div className="flex min-h-[calc(100vh-1.5rem)] flex-1 flex-col overflow-hidden rounded-2xl border border-border/70 bg-background/90 shadow-[0_1px_2px_rgba(10,14,20,0.08),0_10px_35px_rgba(10,14,20,0.05)] backdrop-blur">
-          <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-background/85 px-3 py-3 backdrop-blur md:px-6">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon-sm"
-                className="md:hidden"
-                onClick={() => setMobileSidebarOpen(true)}
-                aria-label="Abrir menu"
-              >
-                <Menu />
-              </Button>
-              <div>
-                <h1 className="text-base font-semibold leading-none md:text-lg">Painel operacional</h1>
-                <p className="mt-1 text-xs text-muted-foreground md:text-sm">Controle sua agenda, clientes e caixa em um so lugar.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="hidden sm:inline-flex">
-                Operacao ativa
-              </Badge>
-              <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-                Novo cliente
-              </Button>
-              <Button size="sm">Novo agendamento</Button>
-            </div>
-          </header>
+          <AppHeader onOpenMobileSidebar={() => setMobileSidebarOpen(true)} />
 
           <main className="flex-1 overflow-auto px-3 py-4 md:px-6 md:py-6">{children}</main>
         </div>
