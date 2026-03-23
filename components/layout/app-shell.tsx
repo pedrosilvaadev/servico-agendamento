@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { AppHeader } from "@/components/shared/layout/header";
+import { MobileBottomNav } from "@/components/shared/layout/mobile-bottom-nav";
 import { Sidebar } from "@/components/shared/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -77,9 +78,11 @@ export function AppShell({ children }: AppShellProps) {
         <div className="flex min-h-[calc(100vh-1.5rem)] flex-1 flex-col overflow-hidden rounded-2xl border border-border/70 bg-background/90 shadow-[0_1px_2px_rgba(10,14,20,0.08),0_10px_35px_rgba(10,14,20,0.05)] backdrop-blur">
           <AppHeader onOpenMobileSidebar={() => setMobileSidebarOpen(true)} />
 
-          <main className="flex-1 overflow-auto px-3 py-4 md:px-6 md:py-6">{children}</main>
+          <main className="flex-1 overflow-auto px-3 pt-4 pb-20 md:px-6 md:py-6">{children}</main>
         </div>
       </div>
+
+      <MobileBottomNav />
     </div>
   );
 }

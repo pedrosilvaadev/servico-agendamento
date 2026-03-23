@@ -1,33 +1,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  CalendarDays,
-  LayoutDashboard,
-  Scissors,
-  Users,
-  Wallet,
-} from "lucide-react";
 
+import { navigationItems } from "@/components/shared/layout/navigation-items";
 import { cn } from "@/lib/utils";
 
 type SidebarProps = {
   compact?: boolean;
   onNavigate?: () => void;
 };
-
-type NavigationItem = {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
-
-const navigationItems: NavigationItem[] = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/clientes", label: "Clientes", icon: Users },
-  { href: "/servicos", label: "Servicos", icon: Scissors },
-  { href: "/financeiro", label: "Financeiro", icon: Wallet },
-];
 
 export function Sidebar({ compact = false, onNavigate }: SidebarProps) {
   const pathname = usePathname();
