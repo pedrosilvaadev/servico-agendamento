@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { appointmentsMock } from "@/lib/mock-data";
@@ -65,7 +66,15 @@ export function AgendaPage() {
     });
   }, [appointments, selectedDate, viewMode]);
 
-  function handleCreate(payload: { clientName: string; serviceName: string; time: string }) {
+  async function handleCreate(payload: { clientName: string; serviceName: string; time: string }) {
+    const existsInSlot = appointments.some((appointment) => {
+      return appointment.date === toIsoDate(selectedDate) && appointment.time === payload.time;
+    });
+
+    if (existsInSlot) {
+      throw new Error("Já existe um agendamento neste horário para a data selecionada.");
+    }
+
     const newAppointment: LocalAppointment = {
       id: crypto.randomUUID(),
       date: toIsoDate(selectedDate),
@@ -110,15 +119,22 @@ export function AgendaPage() {
           <h3 className="mb-3 text-base font-semibold">
             {viewMode === "day" ? "Agendamentos do dia" : "Agendamentos da semana"}
           </h3>
-          <AppointmentList
-            items={visibleAppointments.map((item) => ({
-              id: item.id,
-              time: item.time,
-              clientName: item.clientName,
-              serviceName: item.serviceName,
-              status: item.status,
-            }))}
-          />
+          {visibleAppointments.length === 0 ? (
+            <EmptyState
+              title="Sem agendamentos neste período"
+              description="Crie um novo agendamento para começar a preencher sua agenda."
+            />
+          ) : (
+            <AppointmentList
+              items={visibleAppointments.map((item) => ({
+                id: item.id,
+                time: item.time,
+                clientName: item.clientName,
+                serviceName: item.serviceName,
+                status: item.status,
+              }))}
+            />
+          )}
         </article>
 
         <CreateAppointmentCard onCreate={handleCreate} />
