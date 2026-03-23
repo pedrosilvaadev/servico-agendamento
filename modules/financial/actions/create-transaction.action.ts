@@ -1,14 +1,24 @@
 "use server";
 
+import { executeAction, ServerActionResult } from "@/lib/server-action";
 import { prisma } from "@/lib/prisma";
 import {
   CreateTransactionInput,
   createTransactionSchema,
 } from "@/modules/financial/schemas/create-transaction.schema";
-import { createTransactionService } from "@/modules/financial/services/create-transaction.service";
+import {
+  createTransactionService,
+  CreateTransactionResult,
+} from "@/modules/financial/services/create-transaction.service";
 
-export async function createTransactionAction(input: CreateTransactionInput) {
-  const parsedInput = createTransactionSchema.parse(input);
+export async function createTransaction(
+  input: CreateTransactionInput,
+): Promise<ServerActionResult<CreateTransactionResult>> {
+  return executeAction(async () => {
+    const parsedInput = createTransactionSchema.parse(input);
 
-  return createTransactionService(prisma, parsedInput);
+    return createTransactionService(prisma, parsedInput);
+  });
 }
+
+export const createTransactionAction = createTransaction;

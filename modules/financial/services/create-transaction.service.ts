@@ -31,7 +31,7 @@ export async function createTransactionService(
       }
     }
 
-    return tx.transaction.create({
+    const createdTransaction = await tx.transaction.create({
       data: {
         userId: input.userId,
         appointmentId: input.appointmentId,
@@ -50,5 +50,12 @@ export async function createTransactionService(
         occurredAt: true,
       },
     });
+
+    return {
+      ...createdTransaction,
+      amount: createdTransaction.amount.toNumber(),
+    };
   });
 }
+
+export type CreateTransactionResult = Awaited<ReturnType<typeof createTransactionService>>;
