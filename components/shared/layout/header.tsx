@@ -1,16 +1,23 @@
+"use client";
+
 import { Menu } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useUIStore } from "@/store";
 
 type AppHeaderProps = {
   onOpenMobileSidebar: () => void;
+  onOpenCreateClient: () => void;
+  onOpenCreateService: () => void;
+  onOpenCreateAppointment: () => void;
 };
 
-export function AppHeader({ onOpenMobileSidebar }: AppHeaderProps) {
-  const openModal = useUIStore((state) => state.openModal);
-
+export function AppHeader({
+  onOpenMobileSidebar,
+  onOpenCreateClient,
+  onOpenCreateService,
+  onOpenCreateAppointment,
+}: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-background/85 px-3 py-3 backdrop-blur md:px-6">
       <div className="flex items-center gap-2">
@@ -35,13 +42,13 @@ export function AppHeader({ onOpenMobileSidebar }: AppHeaderProps) {
         <Badge variant="secondary" className="hidden sm:inline-flex">
           Operacao ativa
         </Badge>
-        <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={() => openModal("createClient")}>
+        <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={onOpenCreateClient}>
           Novo cliente
         </Button>
-        <Button variant="outline" size="sm" className="hidden lg:inline-flex" onClick={() => openModal("createService")}>
+        <Button variant="outline" size="sm" className="hidden lg:inline-flex" onClick={onOpenCreateService}>
           Novo servico
         </Button>
-        <Button size="sm" onClick={() => openModal("createAppointment")}>Novo agendamento</Button>
+        <Button size="sm" onClick={onOpenCreateAppointment}>Novo agendamento</Button>
       </div>
     </header>
   );
